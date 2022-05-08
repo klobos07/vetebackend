@@ -5,7 +5,7 @@ const getCitas = async(req, res = response )=>{
     
     const citas = await Cita.find()
                             .populate('mascota','nombre')
-                            .populate('medico','nombre')
+                            .populate('usuario','nombre')
         res.json({
         ok: true,
         citas
@@ -112,3 +112,4 @@ module.exports = {
     actualizarCitas,
     borrarCitas
 }
+

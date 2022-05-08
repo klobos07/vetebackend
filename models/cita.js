@@ -33,7 +33,7 @@ const CitaSchema = new Schema({
     },
     medico:{
         type: Schema.Types.ObjectId,
-        ref: 'Medico',
+        ref: 'Usuario',
         required: true
     },
 });
