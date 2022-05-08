@@ -5,7 +5,7 @@ const getCitas = async(req, res = response )=>{
     
     const citas = await Cita.find()
                             .populate('mascota','nombre')
-                            .populate('usuario','nombre')
+                            .populate('medico','nombre')
         res.json({
         ok: true,
         citas
