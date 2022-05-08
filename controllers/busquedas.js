@@ -71,7 +71,7 @@ const getDocumentosColeccion = async (req,res = response) => {
         break;
 
         case 'citas':
-            data = await Cita.find({fechCita: regex })
+            data = await Cita.find({motivo: regex })
                              .populate('usuario', 'nombre')
                              .populate('mascota','nombre')
                              .populate('medico','nombre')
