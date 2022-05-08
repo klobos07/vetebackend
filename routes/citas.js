@@ -19,7 +19,7 @@ router.post('/',
     [ 
         validarJWT,
         check('motivo', 'El motivo de la cita es obligatorio').not().isEmpty(),
-        check('fecCita', 'La fecha es necesaria').not().isDate(),
+        check('fechCita', 'La fecha es necesaria').not().isEmpty(),
         check('horaCita', 'La hora es necesaria').not().isEmpty(),
         check('mascota','El codigo de mascota debe ser válido').isMongoId(),
         check('medico','El codigo de medico debe ser válido').isMongoId(),
