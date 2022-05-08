@@ -9,11 +9,13 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 const { getCitas,
     crearCitas,
     actualizarCitas,
-    borrarCitas } = require('../controllers/citas');
+    borrarCitas, getCitasByUser } = require('../controllers/citas');
 
 const router = Router();
 
-router.get('/', getCitas);
+router.get('/:id', getCitas);
+
+router.get('/usuario/:id', getCitasByUser);
 
 router.post('/',
     [ 

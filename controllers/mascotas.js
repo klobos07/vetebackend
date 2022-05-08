@@ -1,112 +1,119 @@
-const {response} = require('express');
-const Mascota = require('../models/mascota');
+const { response } = require("express");
+const Mascota = require("../models/mascota");
 
-const getMascotas = async(req, res = response )=>{
-    const mascotas = await Mascota.find()
-                                 .populate('raza','nombre')
-                                 .populate('especie','nombre')
+const getMascotas = async (req, res = response) => {
+  const mascotas = await Mascota.find()
+    .populate("raza", "nombre")
+    .populate("especie", "nombre");
+  res.json({
+    ok: true,
+    mascotas,
+  });
+};
+
+const getMascotasByUser = async (req, res = response) => {
+  const mascotas = await Mascota.find({ usuario: req.params.id })
+    .populate("raza", "nombre")
+    .populate("especie", "nombre");
+  res.json({
+    ok: true,
+    mascotas,
+  });
+};
+
+const crearMascotas = async (req, res = response) => {
+  const uid = req.uid;
+  const mascota = new Mascota({
+    usuario: uid,
+    ...req.body,
+  });
+
+  try {
+    const mascotaDB = await mascota.save();
+
     res.json({
+      ok: true,
+      mascota: mascotaDB,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error interno del servidor ",
+    });
+  }
+};
+
+const actualizarMascotas = async (req, res = response) => {
+  const id = req.params.id;
+  const uid = req.uid;
+
+  try {
+    const mascota = await Mascota.findById(id);
+
+    if (!mascota) {
+      return res.status(404).json({
         ok: true,
-        mascotas
-    });
-}
-
-const crearMascotas = async(req, res = response )=>{
-    const uid = req.uid;
-    const mascota = new Mascota({
-        usuario:uid,
-        ...req.body
-    });
-
-    try {
-        const mascotaDB = await mascota.save();
-
-            res.json({
-             ok: true,
-             mascota: mascotaDB
-        }); 
-
-    } catch (error) {
-             console.log(error);
-             res.status(500).json({
-             ok: false,
-             msg: 'Error interno del servidor '
-        })
+        msg: "Mascota no encontrada",
+      });
     }
-}
 
-const actualizarMascotas = async(req, res = response )=>{
-    const id = req.params.id;
-    const uid = req.uid;
+    const cambiosMascota = {
+      ...req.body,
+      usuario: uid,
+    };
 
-    try {
-            const mascota = await Mascota.findById(id);
+    const mascotaActualizado = await Mascota.findByIdAndUpdate(
+      id,
+      cambiosMascota,
+      { new: true }
+    );
 
-            if(!mascota){
-                return res.status(404).json({
-                    ok:true,
-                    msg: 'Mascota no encontrada'
-                });
-            }
+    res.json({
+      ok: true,
+      mascota: mascotaActualizado,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error interno del servidor",
+    });
+  }
+};
 
-            const cambiosMascota = {
-                ...req.body,
-                usuario: uid
-            }
+const borrarMascotas = async (req, res = response) => {
+  const id = req.params.id;
 
-            const mascotaActualizado = await Mascota.findByIdAndUpdate(id,cambiosMascota, {new: true});
+  try {
+    const mascota = await Mascota.findById(id);
 
-            res.json({
-                ok: true,
-                mascota: mascotaActualizado
-            })
-
-        
-    } catch (error) {
-
-        console.log(error); 
-        res.status(500).json({
-            ok: false,
-            msg:'Error interno del servidor'
-        });
+    if (!mascota) {
+      return res.status(404).json({
+        ok: true,
+        msg: "Mascota no encontrada",
+      });
     }
-}
 
-const borrarMascotas = async(req, res = response)=>{
-    const id = req.params.id;
+    await Mascota.findByIdAndDelete(id);
 
-        try {
-                const mascota = await Mascota.findById(id);
-    
-                if(!mascota){
-                    return res.status(404).json({
-                        ok:true,
-                        msg: 'Mascota no encontrada'
-                    });
-                }
-    
-                await Mascota.findByIdAndDelete(id);
-                      
-                res.json({
-                    ok: true,
-                    msg: 'Mascota eliminada'
-                })
-    
-            
-        } catch (error) {
-    
-            console.log(error); 
-            res.status(500).json({
-                ok: false,
-                msg:'Error interno del servidor'
-            });
-        }
-        
-}
+    res.json({
+      ok: true,
+      msg: "Mascota eliminada",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error interno del servidor",
+    });
+  }
+};
 
 module.exports = {
-    getMascotas,
-    crearMascotas,
-    actualizarMascotas,
-    borrarMascotas
-}
+  getMascotas,
+  crearMascotas,
+  actualizarMascotas,
+  borrarMascotas,
+  getMascotasByUser,
+};

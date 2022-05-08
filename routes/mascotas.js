@@ -6,11 +6,13 @@ const { validarCampos } = require('../middlewares/validar-campos');
 
 const { validarJWT } = require('../middlewares/validar-jwt');
 
-const { getMascotas, crearMascotas, actualizarMascotas, borrarMascotas } = require('../controllers/mascotas');
+const { getMascotas, crearMascotas, actualizarMascotas, borrarMascotas, getMascotasByUser } = require('../controllers/mascotas');
 
 const router = Router();
 
 router.get('/', getMascotas);
+
+router.get('/usuario/:id', getMascotasByUser);
 
 router.post('/',
     [ 
